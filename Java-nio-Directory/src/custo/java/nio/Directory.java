@@ -74,7 +74,7 @@ public class Directory {
 		}
 	}
 
-	public List<Path> getSubFiles() throws IOException {
+	public List<Path> getSubPaths() throws IOException {
 		ArrayList<Path> paths = new ArrayList<>();
 		DirectoryStream<Path> directoryStream = Files.newDirectoryStream(this.path);
 		directoryStream.forEach((path) -> {
@@ -88,7 +88,7 @@ public class Directory {
 			public void run() {
 				Directory.processDirectoryListener();
 			}
-		}).start();
+		}, "Thread2ListenOnDirectoryChange").start();
 	}
 
 	private static void processDirectoryListener() {
