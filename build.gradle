@@ -1,0 +1,18 @@
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'application'
+
+def progName = 'DirectoryAPI'
+mainClassName = 'None'
+def progVersion = '0.1.0'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    baseName = progName
+    version =  progVersion
+}
