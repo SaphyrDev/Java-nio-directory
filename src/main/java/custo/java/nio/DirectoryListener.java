@@ -6,5 +6,5 @@ import java.util.List;
 
 @FunctionalInterface
 public interface DirectoryListener {
-	public void onEvent(WatchKey key, List<WatchEvent<?>> events);
+	void onEvent(WatchKey key, List<WatchEvent<?>> events);
 }

@@ -1,0 +1,38 @@
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'application'
+
+def progName = 'Directory'
+mainClassName = 'None'
+def progVersion = '0.1.0'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    /*flatDir {
+        dirs 'lib'
+    }*/
+}
+
+dependencies {
+}
+
+jar {
+    baseName = progName
+    version =  progVersion
+    /*manifest {
+        attributes 'Main-Class': mainClassName
+    }*/
+}
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': progName,
+                'Implementation-Version': progVersion,
+                'Main-Class': mainClassName
+    }
+    baseName = project.name + '-' + progVersion
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
