@@ -39,6 +39,11 @@ public class Directory {
 	private final LinkedList<DirectoryListener> directoryListeners = new LinkedList<>();
 
 	/**
+	 * Volatile boolean to stop a Thread
+	 */
+	private static volatile boolean isWatcherRunning = true;
+
+	/**
 	 * Static init block which init the {@link WatchService} and running a new {@link Thread}, which receive the events.
      */
 	static {
@@ -55,10 +60,23 @@ public class Directory {
 	 * This method create the directory identified by the path param.
 	 * @param path The path of the new directory
 	 * @param options The options of the file attribute
+	 * @return The final directory
 	 * @throws IOException
      */
 	public static Directory mkdirs(String path, FileAttribute<?>... options) throws IOException {
 		Files.createDirectory(Paths.get(path), options);
+		return new Directory(path);
+	}
+
+	/**
+	 * @see Directory#mkdirs(String, FileAttribute[])
+	 * @param path The path
+	 * @param options the options
+	 * @return The final directory
+	 * @throws IOException
+	 */
+	public static Directory mkdirs(Path path, FileAttribute<?>... options) throws IOException {
+		Files.createDirectory(path, options);
 		return new Directory(path);
 	}
 
@@ -174,7 +192,7 @@ public class Directory {
 	 * Then it reset the {@link WatchKey} which represent the {@link Directory} with {@link WatchKey#reset()} in order to tell the {@link WatchService} that all the events is consummed.
      */
 	private static void processDirectoryListener() {
-		for (;;) {
+		while (Directory.isWatcherRunning){
 			try {
 				WatchKey key = Directory.watchService.take();
 				System.out.println(key);
@@ -190,5 +208,9 @@ public class Directory {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public static void terminateWatcher(){
+		Directory.isWatcherRunning = false;
 	}
 }
