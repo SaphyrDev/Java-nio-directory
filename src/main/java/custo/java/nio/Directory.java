@@ -38,6 +38,8 @@ public class Directory {
      */
 	private final LinkedList<DirectoryListener> directoryListeners = new LinkedList<>();
 
+	private static Thread watcherThread;
+
 	/**
 	 * Volatile boolean to stop a Thread
 	 */
@@ -181,7 +183,7 @@ public class Directory {
 	 * The {@link Thread} launch the {@link Directory#processDirectoryListener()} method in a {@link Runnable} context.
      */
 	private static void startListening() {
-		new Thread(() -> Directory.processDirectoryListener(), "Thread2ListenOnDirectoryChange").start();
+		 (watcherThread = new Thread(() -> Directory.processDirectoryListener(), "Thread2ListenOnDirectoryChange")).start();
 	}
 
 	/**
@@ -212,5 +214,12 @@ public class Directory {
 
 	public static void terminateWatcher(){
 		Directory.isWatcherRunning = false;
+		if (watcherThread.isAlive()) {
+		    try {
+				watcherThread.stop();
+			} catch (IllegalMonitorStateException e) {
+				System.err.println(e.getMessage());
+			}
+		}
 	}
 }
